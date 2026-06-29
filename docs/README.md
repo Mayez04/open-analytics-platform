@@ -33,6 +33,7 @@ Complete technical documentation for the **Open Analytics Platform**.
 ```bash
 git clone <repository-url>
 cd open-analytics-platform
+chmod +x scripts/*.sh
 cp .env.example .env
 docker compose up -d
 ./scripts/init-platform.sh
@@ -88,4 +89,3 @@ docs/
 | 4.4 Backup and restore | [backup-restore-guide.md](backup-restore-guide.md) |
 | 4.5 Platform documentation | This index + all guides above |
 
-Phases 5–6 (AI assistant, Keycloak security) will extend this documentation set.
