@@ -69,11 +69,8 @@ The first run downloads images (~2–3 GB) and initializes Airflow and Superset 
 ./scripts/init-platform.sh
 ```
 
-On Windows (PowerShell):
 
-```powershell
-.\scripts\init-platform.ps1
-```
+
 
 This script:
 
@@ -82,7 +79,7 @@ This script:
 - Runs demo ETL pipelines in Airflow
 - Registers the PostgreSQL connection in Superset
 
-Skip demo data loading:
+Optional-Skip demo data loading:
 
 ```bash
 ./scripts/init-platform.sh --skip-demo
