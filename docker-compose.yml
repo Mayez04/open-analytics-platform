@@ -1,0 +1,100 @@
+
+services:
+  # --- THE LAKE (Bronze Layer) ---
+  minio:
+    image: minio/minio
+    container_name: lakehouse_minio
+    env_file: .env
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./data/minio:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - lakehouse_net
+
+  # --- THE WAREHOUSE (Gold Layer) ---
+  postgres:
+    image: postgres:15
+    container_name: lakehouse_db
+    env_file: .env
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lakehouse_net
+
+  # --- THE ORCHESTRATOR ---
+  airflow:
+    image: apache/airflow:2.7.0
+    container_name: lakehouse_airflow
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/requirements.txt:/requirements.txt:ro
+    ports:
+      - "${AIRFLOW_WEB_PORT:-8081}:8080"
+    command:
+      - bash
+      - -c
+      - |
+        pip install -r /requirements.txt --quiet
+        airflow db init
+        airflow users create --username ${AIRFLOW_ADMIN_USER} --password ${AIRFLOW_ADMIN_PASSWORD} --firstname Air --lastname Flow --role Admin --email ${AIRFLOW_ADMIN_EMAIL} || true
+        echo "SECRET_KEY = '${AIRFLOW_SECRET_KEY}'" >> /opt/airflow/webserver_config.py
+        airflow scheduler &
+        airflow webserver
+    networks:
+      - lakehouse_net
+
+  # --- THE VISUALIZATION ---
+  superset:
+    build:
+      context: ./superset
+      dockerfile: Dockerfile
+    container_name: lakehouse_superset
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${SUPERSET_PORT:-8088}:8088"
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+    command: >
+      bash -c "superset db upgrade &&
+               superset fab create-admin --username ${SUPERSET_ADMIN_USER} --firstname Superset --lastname Admin --email ${SUPERSET_ADMIN_EMAIL} --password ${SUPERSET_ADMIN_PASSWORD} || true &&
+               superset init &&
+               superset run -h 0.0.0.0 -p 8088 --with-threads --reload --debugger"
+    networks:
+      - lakehouse_net
+
+networks:
+  lakehouse_net:
+    driver: bridge

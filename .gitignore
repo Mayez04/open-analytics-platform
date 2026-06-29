@@ -1,0 +1,27 @@
+# Runtime data (Docker volumes)
+data/
+
+# Backups (may contain secrets)
+backups/
+*.tar.gz
+
+# Airflow runtime logs
+airflow/logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment and secrets
+.env
+*.pem
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
