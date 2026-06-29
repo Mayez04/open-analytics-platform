@@ -13,13 +13,6 @@ cp config/env/development.env.example .env    # local development
 cp config/env/pilot.env.example .env          # client demo / pilot
 ```
 
-On Windows (PowerShell):
-
-```powershell
-Copy-Item .env.example .env
-# or
-Copy-Item config/env/development.env.example .env
-```
 
 Then start the platform:
 
@@ -111,21 +104,7 @@ postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_I
 | `SUPERSET_ADMIN_EMAIL` | Admin email | `admin@superset.com` |
 | `SUPERSET_SECRET_KEY` | Application secret key | — |
 
-### Keycloak (Phase 6)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `KEYCLOAK_PORT` | Host port | `8080` |
-| `KEYCLOAK_ADMIN_USER` | Admin username | `admin` |
-| `KEYCLOAK_ADMIN_PASSWORD` | Admin password | — |
-
-### AI Assistant (Phase 5)
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `LLM_PROVIDER` | Provider name (`openai`, `azure`, `anthropic`, `local`) | `openai` |
-| `LLM_API_KEY` | API key for the provider | — |
-| `LLM_MODEL` | Model identifier | `gpt-4o-mini` |
 
 ### DHIS2 pipeline (optional)
 
