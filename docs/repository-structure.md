@@ -1,6 +1,6 @@
 # Repository Structure
 
-This document describes the layout of the **Open Analytics Platform** repository (Work Package 4.1) and is part of the complete documentation set (Work Package 4.5).
+This document describes the layout of the **Open Analytics Platform** repository  and is part of the complete documentation set .
 
 ## Top-level layout
 
