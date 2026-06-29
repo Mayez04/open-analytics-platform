@@ -12,17 +12,6 @@ docker compose up -d
 ./scripts/init-platform.sh
 ```
 
-On Windows with Git Bash or WSL:
-
-```bash
-bash ./scripts/init-platform.sh
-```
-
-Or use PowerShell:
-
-```powershell
-.\scripts\init-platform.ps1
-```
 
 Wait until the script prints **Platform initialization complete**.
 
@@ -89,25 +78,7 @@ SELECT * FROM dim_org_unit LIMIT 5;
 
 > Pre-built dashboard exports will be added to `superset/dashboards/` in a future update.
 
-### 6. Future: AI Assistant teaser (2 min)
 
-Explain the Phase 5 roadmap — users will ask questions in natural language:
-
-- "Show total revenue by month in 2025"
-- "Compare the top five regions"
-- "Now focus only on the North region"
-
-The assistant will use metadata, generate validated SQL, and return charts with explanations.
-
-## Example demo questions (Phase 5 preview)
-
-These will be supported once the AI assistant is implemented:
-
-1. Show total revenue by month in 2025.
-2. Compare the top five regions.
-3. Now focus only on the North region.
-4. Explain the anomaly in March.
-5. Generate a short executive summary.
 
 ## Reloading demo data
 
