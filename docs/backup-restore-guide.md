@@ -22,12 +22,6 @@ docker compose up -d
 ./scripts/backup.sh
 ```
 
-On Windows (PowerShell):
-
-```powershell
-docker compose up -d
-.\scripts\backup.ps1
-```
 
 Backups are stored in `./backups/platform-YYYYMMDD-HHMMSS/` by default.
 
@@ -45,11 +39,6 @@ Backups are stored in `./backups/platform-YYYYMMDD-HHMMSS/` by default.
 ./scripts/restore.sh backups/platform-20250614-120000
 ```
 
-On Windows:
-
-```powershell
-.\scripts\restore.ps1 backups\platform-20250614-120000
-```
 
 You can restore from a directory or a `.tar.gz` archive.
 
